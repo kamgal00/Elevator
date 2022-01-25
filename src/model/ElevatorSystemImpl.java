@@ -1,3 +1,5 @@
+package model;
+
 import java.util.List;
 import java.util.TreeSet;
 
@@ -9,7 +11,7 @@ public class ElevatorSystemImpl implements ElevatorSystem {
         this.lowestFloor = lowestFloor;
     }
 
-    private static class Elevator extends ElevatorInfo {
+    private static class Elevator{
         TreeSet<Integer> requestedFloors;
         int currentDirection;
     }
@@ -22,7 +24,7 @@ public class ElevatorSystemImpl implements ElevatorSystem {
     }
 
     @Override
-    public void update(int id, int currentFloor, int destination) {
+    public void update(int id, int currentFloor, List<Integer> destinations) {
 
     }
 
@@ -32,12 +34,32 @@ public class ElevatorSystemImpl implements ElevatorSystem {
     }
 
     @Override
-    public List<ElevatorInfo> status() {
+    public List<ElevatorInfo> elevatorsStatus() {
+        return null;
+    }
+
+    @Override
+    public List<FloorInfo> floorButtonsStatus() {
         return null;
     }
 
     @Override
     public void addDestination(int id, int destination) {
 
+    }
+
+    @Override
+    public int getNumOfFloors() {
+        return 0;
+    }
+
+    @Override
+    public int getNumOfElevators() {
+        return 0;
+    }
+
+    @Override
+    public int getLowestFloor() {
+        return 0;
     }
 }

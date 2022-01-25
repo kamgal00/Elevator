@@ -1,8 +1,9 @@
+import model.MockElevatorSystem;
+import presenter.BuildingPresenter;
 import view.BuildingView;
 
 public class Main {
     public static void main(String[] args) {
-        BuildingView view = new BuildingView();
-        view.initialize();
+        BuildingPresenter pr = new BuildingPresenter(new BuildingView(), new MockElevatorSystem(10,16,-2));
     }
 }
