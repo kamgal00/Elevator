@@ -50,4 +50,7 @@ public class BuildingPresenter {
             }
         }
     }
+    private void clickFloorButton(int floor, int direction) {
+
+    }
 }
