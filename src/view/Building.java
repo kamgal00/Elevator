@@ -1,31 +1,42 @@
 package view;
 
+import presenter.BuildingPresenter;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 class Building extends JPanel {
     int numOfFloors, numOfElevators;
     FloorButtons[] floorButtons;
     Door[][] doors;
-    JButton[] insideButtons;
 
-    void initialize(int numOfFloors, int numOfElevators, int lowestFloor) {
+    void initialize(BuildingPresenter presenter, int numOfFloors, int numOfElevators, int lowestFloor) {
         this.numOfFloors = numOfFloors;
         this.numOfElevators = numOfElevators;
 
         floorButtons = new FloorButtons[numOfFloors];
         for (int i = 0; i < numOfFloors; i++) {
             floorButtons[i] = new FloorButtons(i + lowestFloor);
+            int finalI = i;
+            floorButtons[i].up.addActionListener(e-> presenter.clickFloorButton(finalI, 1));
+            floorButtons[i].down.addActionListener(e-> presenter.clickFloorButton(finalI, -1));
         }
         doors = new Door[numOfFloors][numOfElevators];
         for (int i = 0; i < numOfFloors; i++) {
             for (int j = 0; j < numOfElevators; j++) {
                 doors[i][j] = new Door();
+                int finalJ = j;
+                int finalI = i;
+                doors[i][j].door.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        presenter.clickDoor(finalJ, finalI);
+                    }
+                });
             }
-        }
-        insideButtons = new JButton[numOfElevators];
-        for (int i = 0; i < numOfElevators; i++) {
-            insideButtons[i] = new JButton("Choose floor");
         }
 
         setLayout(new GridBagLayout());
@@ -34,7 +45,7 @@ class Building extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         for (int i = 0; i < numOfFloors; i++) {
             gbc.gridy = 2 * i;
-            gbc.insets = new Insets(20, 0, 0, 0);
+            gbc.insets = new Insets(20, 0, 0, 20);
 
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.gridx = 0;
@@ -47,15 +58,6 @@ class Building extends JPanel {
             }
         }
 
-        // add inside buttons
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 0, 10);
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.gridy = 2 * numOfFloors;
-        for (int i = 0; i < numOfElevators; i++) {
-            gbc.gridx = i + 1;
-            add(insideButtons[i], gbc);
-        }
 
         // add floor separators
         gbc = new GridBagConstraints();

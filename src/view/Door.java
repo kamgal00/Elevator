@@ -5,7 +5,7 @@ import java.awt.*;
 
 class Door extends JPanel {
     private JLabel arrow = new JLabel();
-    private JLabel door = new JLabel();
+     JLabel door = new JLabel();
     private JLabel frame = new JLabel();
 
     public Door() {

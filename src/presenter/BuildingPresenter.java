@@ -7,10 +7,12 @@ import java.awt.*;
 public class BuildingPresenter {
     BuildingViewInt view;
     ElevatorSystem elevatorSystem;
+    Menu menu;
     private final int floors, elevators, lowest;
     public BuildingPresenter(BuildingViewInt view, ElevatorSystem elevatorSystem) {
         this.view = view;
         this.elevatorSystem = elevatorSystem;
+        this.menu = menu;
 
         floors=elevatorSystem.getNumOfFloors();
         elevators=elevatorSystem.getNumOfElevators();
@@ -50,7 +52,16 @@ public class BuildingPresenter {
             }
         }
     }
-    private void clickFloorButton(int floor, int direction) {
-
+    public void clickFloorButton(int floor, int direction) {
+        elevatorSystem.pickup(floor, direction);
+        redraw();
+    }
+    public void clickDoor(int id, int floor) {
+        elevatorSystem.addDestination(id, floor);
+        redraw();
+    }
+    public void step() {
+        elevatorSystem.step();
+        redraw();
     }
 }

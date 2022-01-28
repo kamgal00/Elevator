@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 class FloorButtons extends JPanel {
-    private JButton up = new JButton("UP"), down = new JButton("DOWN");
+    JButton up = new JButton("UP"), down = new JButton("DOWN");
     private JLabel floor = new JLabel();
     public FloorButtons(int floorNR) {
         super();

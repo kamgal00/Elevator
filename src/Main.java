@@ -1,9 +1,12 @@
+import model.ElevatorSystemImpl;
 import model.MockElevatorSystem;
 import presenter.BuildingPresenter;
 import view.BuildingView;
 
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
-        BuildingPresenter pr = new BuildingPresenter(new BuildingView(), new MockElevatorSystem(10,16,-2));
+        new MainFrame();
     }
 }

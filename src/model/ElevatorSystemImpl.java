@@ -1,9 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -15,7 +12,7 @@ public class ElevatorSystemImpl implements ElevatorSystem {
         this.lowestFloor = lowestFloor;
 
         for (int i=0;i<numOfElevators;i++) {
-            elevators.add(new Elevator(i, lowestFloor, lowestFloor+numOfFloors, destinationsUp, destinationsDown));
+            elevators.add(new Elevator(i, lowestFloor, lowestFloor+numOfFloors, destinationsUp, destinationsDown, this));
         }
     }
 
@@ -29,9 +26,19 @@ public class ElevatorSystemImpl implements ElevatorSystem {
         else destinationsDown.add(floor);
 
         elevators.stream()
-                .min(Comparator.comparingInt(a -> a.calculateDistanceTo(floor, direction)))
+                .min(Comparator.comparingInt(a -> 2*a.calculateDistanceTo(floor, direction)-Math.abs(a.currentDirection)))
                 .get()
                 .scheduleFloorTask(floor, direction);
+    }
+
+    public void rescheduleIfCloserThan(int floor, int direction, int distance) {
+        System.out.println(floor+" "+direction+" "+distance);
+        Elevator min = elevators.stream()
+                .min(Comparator.comparingInt(a -> 2*a.calculateDistanceTo(floor, direction)-Math.abs(a.currentDirection)))
+                .get();
+        System.out.println(min.id+" "+min.calculateDistanceTo(floor, direction));
+        if (min.calculateDistanceTo(floor, direction) < distance) min.scheduleFloorTask(floor, direction);
+
     }
 
     @Override

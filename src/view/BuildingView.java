@@ -6,33 +6,32 @@ import presenter.BuildingViewInt;
 import javax.swing.*;
 import java.awt.*;
 
-public class BuildingView implements BuildingViewInt {
+public class BuildingView extends JPanel implements BuildingViewInt {
 
     private static class BottomPanel extends JPanel{
         JButton back = new JButton("Back"), force = new JButton("Force behavior"), step = new JButton("Step");
         public BottomPanel() {
             super();
-            add(back);
-            add(force);
+//            add(back);
+//            add(force);
             add(step);
         }
     }
 
-    JFrame mainFrame;
     private BottomPanel bottomPanel = new BottomPanel();
     private Building building = new Building();
 
     public void initialize(BuildingPresenter presenter, int floors, int elevators, int lowest) {
-        mainFrame = new JFrame();
-        building.initialize(floors,elevators,lowest);
-        mainFrame.setLayout(new BorderLayout());
-        mainFrame.add(bottomPanel, BorderLayout.PAGE_END);
+        building.initialize(presenter, floors,elevators,lowest);
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx=0; gbc.gridy=1;
+        add(bottomPanel, gbc);
 
-        mainFrame.add(new JScrollPane(building), BorderLayout.CENTER);
+        gbc.gridy=0; gbc.weightx = 1; gbc.weighty=1; gbc.fill = GridBagConstraints.BOTH;
+        add(new JScrollPane(building), gbc);
 
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setVisible(true);
-        mainFrame.setSize(800,600);
+        bottomPanel.step.addActionListener(e->presenter.step());
     }
 
     @Override

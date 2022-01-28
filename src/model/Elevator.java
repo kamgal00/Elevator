@@ -1,9 +1,8 @@
 package model;
 
-import com.sun.source.tree.Tree;
-
 import java.util.List;
 import java.util.TreeSet;
+
 class Elevator {
     public static final int WAIT_TIME=10;
     final int id, lowestFloor, highestFloor;
@@ -12,16 +11,20 @@ class Elevator {
     TreeSet<Integer> destinationsDown = new TreeSet<>();
 
     TreeSet<Integer> globalDestinationsUp, globalDestinationsDown;
+
+    ElevatorSystemImpl system;
     boolean isOpened = false;
     int currentDirection=0, currentPosition=0;
     int waitingTime;
 
-    public Elevator(int id, int lowestFloor, int highestFloor, TreeSet<Integer> globalDestinationsUp, TreeSet<Integer> globalDestinationsDown) {
+    public Elevator(int id, int lowestFloor, int highestFloor, TreeSet<Integer> globalDestinationsUp, TreeSet<Integer> globalDestinationsDown, ElevatorSystemImpl system) {
         this.id=id;
         this.lowestFloor = lowestFloor;
         this.highestFloor = highestFloor;
         this.globalDestinationsUp = globalDestinationsUp;
         this.globalDestinationsDown = globalDestinationsDown;
+        this.system = system;
+        this.currentPosition = -lowestFloor;
     }
 
     public void step() {
@@ -77,14 +80,14 @@ class Elevator {
             return false;
         }
         else if (currentDirection == 1) {
-            if(destinations.contains(currentPosition) || destinationsUp.contains(currentPosition)) return false;
+            if(destinations.contains(currentPosition) || destinationsUp.contains(currentPosition) || currentPosition == highestFloor-lowestFloor-1) return false;
             else {
                 currentPosition++;
                 return true;
             }
         }
         else if (currentDirection == -1) {
-            if (destinations.contains(currentPosition) || destinationsDown.contains(currentPosition)) return false;
+            if (destinations.contains(currentPosition) || destinationsDown.contains(currentPosition) || currentPosition==0) return false;
             else {
                 currentPosition--;
                 return true;
@@ -111,8 +114,8 @@ class Elevator {
         return destinations.isEmpty() && destinationsUp.isEmpty() && destinationsDown.isEmpty();
     }
     void makeStepToGroundFloor() {
-        if(currentPosition<0) currentPosition++;
-        else if(currentPosition > 0) currentPosition--;
+        if(currentPosition<-lowestFloor) currentPosition++;
+        else if(currentPosition > -lowestFloor) currentPosition--;
     }
     boolean hasTaskAbove() {
         return destinations.ceiling(currentPosition+1)!=null
@@ -131,7 +134,6 @@ class Elevator {
 
     int calculateDistanceTo(int floor, int direction) {
         updateKnowledge();
-        updateDirection();
         if(currentDirection == 0) return Math.abs(currentPosition-floor);
 
         int min=currentPosition, max=currentPosition;
@@ -147,7 +149,7 @@ class Elevator {
             min = Math.min(min, destinationsDown.first());
             max = Math.max(max, destinationsDown.last());
         }
-
+        System.out.println("id: "+id+", min: "+min+", max: "+max);
         if(currentDirection == 1 && direction>0) {
             if(floor >= currentPosition) return floor-currentPosition;
             else if(floor >= min) return max-currentPosition+max-min+floor-min;
@@ -176,9 +178,17 @@ class Elevator {
     public void scheduleFloorTask(int floor, int direction) {
         if (direction>0) destinationsUp.add(floor);
         else destinationsDown.add(floor);
+
+        if(currentDirection == 0) updateDirection();
+
+        for(int dest: destinationsUp) system.rescheduleIfCloserThan(dest, 1, calculateDistanceTo(dest, 1));
+        for(int dest: destinationsDown) system.rescheduleIfCloserThan(dest, -1, calculateDistanceTo(dest, -1));
+
     }
     public void scheduleDestination(int floor) {
         destinations.add(floor);
+
+        if(currentDirection == 0) updateDirection();
     }
     public void update(int newPosition, List<Integer> destinations) {
         currentPosition=newPosition;
