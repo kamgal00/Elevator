@@ -52,6 +52,7 @@ public class MainFrame extends JFrame {
             revalidate();
             repaint();
         });
+        generate.doClick();
         setVisible(true);
         setSize(600,400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

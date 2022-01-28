@@ -1,7 +1,9 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 class Elevator {
     public static final int WAIT_TIME=10;
@@ -172,7 +174,7 @@ class Elevator {
     }
 
     ElevatorSystem.ElevatorInfo getInfo() {
-        return new ElevatorSystem.ElevatorInfo(id, currentPosition, destinations.stream().toList(), isOpened);
+        return new ElevatorSystem.ElevatorInfo(id, currentPosition, new ArrayList<>(destinations), isOpened);
     }
 
     public void scheduleFloorTask(int floor, int direction) {
