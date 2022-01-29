@@ -147,7 +147,6 @@ class Elevator {
             min = Math.min(min, scheduledButtonsDown.first());
             max = Math.max(max, scheduledButtonsDown.last());
         }
-        System.out.println("id: "+id+", min: "+min+", max: "+max);
         if(currentDirection == 1 && direction>0) {
             if(floor >= currentPosition) return floor-currentPosition;
             else if(floor >= min) return max-currentPosition+max-min+floor-min;

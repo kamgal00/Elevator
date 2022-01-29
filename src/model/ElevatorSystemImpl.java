@@ -32,11 +32,9 @@ public class ElevatorSystemImpl implements ElevatorSystem {
     }
 
     public void rescheduleIfCloserThan(int floor, int direction, int distance) {
-        System.out.println(floor+" "+direction+" "+distance);
         Elevator min = elevators.stream()
                 .min(Comparator.comparingInt(a -> 2*a.calculateDistanceTo(floor, direction)-Math.abs(a.currentDirection)))
                 .get();
-        System.out.println(min.id+" "+min.calculateDistanceTo(floor, direction));
         if (min.calculateDistanceTo(floor, direction) < distance) min.scheduleFloorTask(floor, direction);
 
     }
