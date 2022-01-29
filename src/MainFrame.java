@@ -40,10 +40,21 @@ public class MainFrame extends JFrame {
         gbc.gridy=6;
         leftPanel.add(generate,gbc);
         generate.addActionListener(e->{
+            int elev, fl, low;
+            try {
+                elev = Integer.parseInt(elevators.getText());
+                fl = Integer.parseInt(floors.getText());
+                low = Integer.parseInt(lowestFloor.getText());
+            }
+            catch (NumberFormatException ee) {
+                JOptionPane.showMessageDialog(this, "Należy podać liczby całkowite.");
+                return;
+            }
+            if(elev<1 || elev > 16 || fl < 1 || low>0 || low<-fl+1) {
+                JOptionPane.showMessageDialog(this, "Nieprawidłowe dane.");
+                return;
+            }
             centerPanel.removeAll();
-            int elev = Integer.parseInt(elevators.getText()),
-                    fl = Integer.parseInt(floors.getText()),
-                    low = Integer.parseInt(lowestFloor.getText());
             BuildingView bv = new BuildingView();
             new BuildingPresenter(bv, new ElevatorSystemImpl(elev, fl, low));
             GridBagConstraints gbcc = new GridBagConstraints();
@@ -56,5 +67,7 @@ public class MainFrame extends JFrame {
         setVisible(true);
         setSize(600,400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(MAXIMIZED_BOTH);
+        setTitle("Elevators");
     }
 }

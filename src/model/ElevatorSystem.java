@@ -26,11 +26,11 @@ public interface ElevatorSystem {
         }
     }
 
-    void update(int id, int currentFloor, List<Integer> destinations);
+    void update(int id, int newFloor, List<Integer> destinations);
     void step();
 
     List<ElevatorInfo> elevatorsStatus();
-    List<FloorInfo> floorButtonsStatus();
+    List<FloorInfo> externalButtonsStatus();
 
     void addDestination(int id, int destination);
     void pickup(int floor, int direction);

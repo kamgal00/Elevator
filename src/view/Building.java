@@ -11,6 +11,7 @@ class Building extends JPanel {
     int numOfFloors, numOfElevators;
     FloorButtons[] floorButtons;
     Door[][] doors;
+    JButton[] clearButtons;
 
     void initialize(BuildingPresenter presenter, int numOfFloors, int numOfElevators, int lowestFloor) {
         this.numOfFloors = numOfFloors;
@@ -33,10 +34,20 @@ class Building extends JPanel {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
-                        presenter.clickDoor(finalJ, finalI);
+                        if (SwingUtilities.isLeftMouseButton(e))
+                            presenter.clickDoor(finalJ, finalI);
+                        if(SwingUtilities.isRightMouseButton(e))
+                            presenter.forcePosition(finalJ, finalI);
                     }
                 });
             }
+        }
+
+        clearButtons = new JButton[numOfElevators];
+        for (int i=0;i<numOfElevators;i++) {
+            clearButtons[i] = new JButton("Clear");
+            int finalI = i;
+            clearButtons[i].addActionListener(e->presenter.clearDestinations(finalI));
         }
 
         setLayout(new GridBagLayout());
@@ -51,13 +62,21 @@ class Building extends JPanel {
             gbc.gridx = 0;
             add(floorButtons[numOfFloors - 1 - i], gbc);
 
-            gbc.anchor = GridBagConstraints.PAGE_END;
+            gbc.anchor = GridBagConstraints.LAST_LINE_END;
             for (int j = 0; j < numOfElevators; j++) {
                 gbc.gridx = j + 1;
                 add(doors[numOfFloors - 1 - i][j], gbc);
             }
         }
 
+        //place clear buttons
+        gbc = new GridBagConstraints();
+        gbc.gridy=2*numOfFloors;
+        gbc.insets = new Insets(10,10,10,10);
+        for(int i=0;i<numOfElevators;i++) {
+            gbc.gridx=i+1;
+            add(clearButtons[i], gbc);
+        }
 
         // add floor separators
         gbc = new GridBagConstraints();

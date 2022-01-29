@@ -3,28 +3,27 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 class Elevator {
     public static final int WAIT_TIME=10;
     final int id, lowestFloor, highestFloor;
     TreeSet<Integer> destinations = new TreeSet<>();
-    TreeSet<Integer> destinationsUp = new TreeSet<>();
-    TreeSet<Integer> destinationsDown = new TreeSet<>();
+    TreeSet<Integer> scheduledButtonsUp = new TreeSet<>();
+    TreeSet<Integer> scheduledButtonsDown = new TreeSet<>();
 
-    TreeSet<Integer> globalDestinationsUp, globalDestinationsDown;
+    TreeSet<Integer> globalButtonsUp, globalButtonsDown;
 
     ElevatorSystemImpl system;
     boolean isOpened = false;
-    int currentDirection=0, currentPosition=0;
+    int currentDirection=0, currentPosition;
     int waitingTime;
 
     public Elevator(int id, int lowestFloor, int highestFloor, TreeSet<Integer> globalDestinationsUp, TreeSet<Integer> globalDestinationsDown, ElevatorSystemImpl system) {
         this.id=id;
         this.lowestFloor = lowestFloor;
         this.highestFloor = highestFloor;
-        this.globalDestinationsUp = globalDestinationsUp;
-        this.globalDestinationsDown = globalDestinationsDown;
+        this.globalButtonsUp = globalDestinationsUp;
+        this.globalButtonsDown = globalDestinationsDown;
         this.system = system;
         this.currentPosition = -lowestFloor;
     }
@@ -46,11 +45,11 @@ class Elevator {
         if(isOpened) removeLocalTasks();
     }
     void updateKnowledge() {
-        destinationsUp.retainAll(globalDestinationsUp);
-        destinationsDown.retainAll(globalDestinationsDown);
+        scheduledButtonsUp.retainAll(globalButtonsUp);
+        scheduledButtonsDown.retainAll(globalButtonsDown);
 
-        if(globalDestinationsUp.contains(currentPosition)) destinationsUp.add(currentPosition);
-        if(globalDestinationsDown.contains(currentPosition)) destinationsDown.add(currentPosition);
+        if(globalButtonsUp.contains(currentPosition)) scheduledButtonsUp.add(currentPosition);
+        if(globalButtonsDown.contains(currentPosition)) scheduledButtonsDown.add(currentPosition);
     }
     void updateDirection() {
         if(hasNothingToDo()) {
@@ -82,14 +81,14 @@ class Elevator {
             return false;
         }
         else if (currentDirection == 1) {
-            if(destinations.contains(currentPosition) || destinationsUp.contains(currentPosition) || currentPosition == highestFloor-lowestFloor-1) return false;
+            if(destinations.contains(currentPosition) || scheduledButtonsUp.contains(currentPosition) || currentPosition == highestFloor-lowestFloor-1) return false;
             else {
                 currentPosition++;
                 return true;
             }
         }
         else if (currentDirection == -1) {
-            if (destinations.contains(currentPosition) || destinationsDown.contains(currentPosition) || currentPosition==0) return false;
+            if (destinations.contains(currentPosition) || scheduledButtonsDown.contains(currentPosition) || currentPosition==0) return false;
             else {
                 currentPosition--;
                 return true;
@@ -101,19 +100,16 @@ class Elevator {
         if (destinations.contains(currentPosition)) {
             return true;
         }
-        if((currentDirection==1 && destinationsUp.contains(currentPosition))
-                || (currentDirection == -1 && destinationsDown.contains(currentPosition))){
-            return true;
-        }
-        return false;
+        return (currentDirection == 1 && scheduledButtonsUp.contains(currentPosition))
+                || (currentDirection == -1 && scheduledButtonsDown.contains(currentPosition));
     }
     void removeLocalTasks() {
         destinations.remove(currentPosition);
-        globalDestinationsUp.remove(currentPosition);
-        globalDestinationsDown.remove(currentPosition);
+        globalButtonsUp.remove(currentPosition);
+        globalButtonsDown.remove(currentPosition);
     }
     boolean hasNothingToDo() {
-        return destinations.isEmpty() && destinationsUp.isEmpty() && destinationsDown.isEmpty();
+        return destinations.isEmpty() && scheduledButtonsUp.isEmpty() && scheduledButtonsDown.isEmpty();
     }
     void makeStepToGroundFloor() {
         if(currentPosition<-lowestFloor) currentPosition++;
@@ -121,13 +117,13 @@ class Elevator {
     }
     boolean hasTaskAbove() {
         return destinations.ceiling(currentPosition+1)!=null
-                || destinationsDown.ceiling(currentPosition+1)!=null
-                || destinationsUp.ceiling(currentPosition)!=null;
+                || scheduledButtonsDown.ceiling(currentPosition+1)!=null
+                || scheduledButtonsUp.ceiling(currentPosition)!=null;
     }
     boolean hasTaskBelow() {
         return destinations.floor(currentPosition-1)!=null
-                || destinationsDown.floor(currentPosition)!=null
-                || destinationsUp.floor(currentPosition-1)!=null;
+                || scheduledButtonsDown.floor(currentPosition)!=null
+                || scheduledButtonsUp.floor(currentPosition-1)!=null;
     }
     void restartClock() {
         waitingTime=WAIT_TIME;
@@ -143,13 +139,13 @@ class Elevator {
             min = Math.min(min, destinations.first());
             max = Math.max(max, destinations.last());
         }
-        if(!destinationsUp.isEmpty()) {
-            min = Math.min(min, destinationsUp.first());
-            max = Math.max(max, destinationsUp.last());
+        if(!scheduledButtonsUp.isEmpty()) {
+            min = Math.min(min, scheduledButtonsUp.first());
+            max = Math.max(max, scheduledButtonsUp.last());
         }
-        if(!destinationsDown.isEmpty()) {
-            min = Math.min(min, destinationsDown.first());
-            max = Math.max(max, destinationsDown.last());
+        if(!scheduledButtonsDown.isEmpty()) {
+            min = Math.min(min, scheduledButtonsDown.first());
+            max = Math.max(max, scheduledButtonsDown.last());
         }
         System.out.println("id: "+id+", min: "+min+", max: "+max);
         if(currentDirection == 1 && direction>0) {
@@ -178,13 +174,13 @@ class Elevator {
     }
 
     public void scheduleFloorTask(int floor, int direction) {
-        if (direction>0) destinationsUp.add(floor);
-        else destinationsDown.add(floor);
+        if (direction>0) scheduledButtonsUp.add(floor);
+        else scheduledButtonsDown.add(floor);
 
         if(currentDirection == 0) updateDirection();
 
-        for(int dest: destinationsUp) system.rescheduleIfCloserThan(dest, 1, calculateDistanceTo(dest, 1));
-        for(int dest: destinationsDown) system.rescheduleIfCloserThan(dest, -1, calculateDistanceTo(dest, -1));
+        for(int dest: scheduledButtonsUp) system.rescheduleIfCloserThan(dest, 1, calculateDistanceTo(dest, 1));
+        for(int dest: scheduledButtonsDown) system.rescheduleIfCloserThan(dest, -1, calculateDistanceTo(dest, -1));
 
     }
     public void scheduleDestination(int floor) {
@@ -195,5 +191,7 @@ class Elevator {
     public void update(int newPosition, List<Integer> destinations) {
         currentPosition=newPosition;
         this.destinations = new TreeSet<>(destinations);
+        this.isOpened = false;
+        restartClock();
     }
 }

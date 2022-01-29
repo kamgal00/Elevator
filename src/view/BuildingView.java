@@ -9,17 +9,15 @@ import java.awt.*;
 public class BuildingView extends JPanel implements BuildingViewInt {
 
     private static class BottomPanel extends JPanel{
-        JButton back = new JButton("Back"), force = new JButton("Force behavior"), step = new JButton("Step");
+        JButton step = new JButton("Step");
         public BottomPanel() {
             super();
-//            add(back);
-//            add(force);
             add(step);
         }
     }
 
-    private BottomPanel bottomPanel = new BottomPanel();
-    private Building building = new Building();
+    private final BottomPanel bottomPanel = new BottomPanel();
+    private final Building building = new Building();
 
     public void initialize(BuildingPresenter presenter, int floors, int elevators, int lowest) {
         building.initialize(presenter, floors,elevators,lowest);

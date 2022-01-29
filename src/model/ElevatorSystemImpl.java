@@ -17,8 +17,8 @@ public class ElevatorSystemImpl implements ElevatorSystem {
     }
 
     private final int numOfElevators, numOfFloors, lowestFloor;
-    private List<Elevator> elevators = new ArrayList<>();
-    private TreeSet<Integer> destinationsUp=new TreeSet<>(), destinationsDown = new TreeSet<>();
+    private final List<Elevator> elevators = new ArrayList<>();
+    private  final TreeSet<Integer> destinationsUp=new TreeSet<>(), destinationsDown = new TreeSet<>();
 
     @Override
     public void pickup(int floor, int direction) {
@@ -42,8 +42,8 @@ public class ElevatorSystemImpl implements ElevatorSystem {
     }
 
     @Override
-    public void update(int id, int currentFloor, List<Integer> destinations) {
-        elevators.get(id).update(currentFloor, destinations);
+    public void update(int id, int newFloor, List<Integer> destinations) {
+        elevators.get(id).update(newFloor, destinations);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ElevatorSystemImpl implements ElevatorSystem {
     }
 
     @Override
-    public List<FloorInfo> floorButtonsStatus() {
+    public List<FloorInfo> externalButtonsStatus() {
         return IntStream.range(0, numOfFloors)
                 .mapToObj(
                         i->new FloorInfo(

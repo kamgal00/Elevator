@@ -7,4 +7,6 @@ By uruchomić program, wykorzystaj plik *jars/Elevator.jar*. Wymagana wersja Jav
 * Użyj panelu po lewej stronie ekranu, by stworzyć nowy układ wind.
 * Użyj przycisku **Step** na dole ekranu, by wykonać krok symulacji.
 * Użyj przycisków **UP** i **DOWN** po lewej stronie, by przyzwać windę na dane piętro.
-* Kliknij na drzwi windy *i* na piętrze *j*, by zasymulować kliknięcie przycisku *j* wewnątrz kabiny windy *i*. 
+* Kliknij lewym przyciskiem myszy na drzwi windy *i* na piętrze *j*, by zasymulować kliknięcie przycisku *j* wewnątrz kabiny windy *i*. 
+* Kliknij prawym przyciskiem  myszy na drzwi windy *i* na piętrze *j*, by wymusić przemieszczenie windy *i* na piętro *j*.
+* Kliknij przycisk **Clear**, by zresetować przyciski wewnątrz kabiny danej windy.

@@ -3,16 +3,15 @@ package presenter;
 import model.ElevatorSystem;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class BuildingPresenter {
     BuildingViewInt view;
     ElevatorSystem elevatorSystem;
-    Menu menu;
     private final int floors, elevators, lowest;
     public BuildingPresenter(BuildingViewInt view, ElevatorSystem elevatorSystem) {
         this.view = view;
         this.elevatorSystem = elevatorSystem;
-        this.menu = menu;
 
         floors=elevatorSystem.getNumOfFloors();
         elevators=elevatorSystem.getNumOfElevators();
@@ -37,7 +36,7 @@ public class BuildingPresenter {
     }
     private void redraw() {
         clearView();
-        for (ElevatorSystem.FloorInfo info : elevatorSystem.floorButtonsStatus()) {
+        for (ElevatorSystem.FloorInfo info : elevatorSystem.externalButtonsStatus()) {
             if(info.up) view.setFloorButtonColor(info.level,1, Color.RED);
             if(info.down) view.setFloorButtonColor(info.level,-1, Color.RED);
         }
@@ -46,7 +45,7 @@ public class BuildingPresenter {
             for(int dest:info.destinations) {
                 view.setDoorFrameColor(dest, info.id, Color.RED);
             }
-            view.setDoorMarkText(info.currentFloor, info.id, "-->");
+            view.setDoorMarkText(info.currentFloor, info.id, "===>");
             if(info.isOpened) {
                 view.setDoorColor(info.currentFloor, info.id, Color.WHITE);
             }
@@ -62,6 +61,16 @@ public class BuildingPresenter {
     }
     public void step() {
         elevatorSystem.step();
+        redraw();
+    }
+    public void forcePosition(int id, int floor) {
+        ElevatorSystem.ElevatorInfo ei = elevatorSystem.elevatorsStatus().get(id);
+        elevatorSystem.update(id, floor, ei.destinations);
+        redraw();
+    }
+    public void clearDestinations(int id) {
+        ElevatorSystem.ElevatorInfo ei = elevatorSystem.elevatorsStatus().get(id);
+        elevatorSystem.update(id, ei.currentFloor, new ArrayList<>());
         redraw();
     }
 }
