@@ -4,6 +4,7 @@ Symulator systemu wind napisany w Javie.
 ## Uruchamianie
 By uruchomić program, wykorzystaj plik *jars/Elevator.jar*. Wymagana wersja Javy: **11**
 ## Sterowanie
+Strzałka wskazuje na obecną pozycję windy. Obwódka drzwi jest czerwona, jeżeli winda ma zlecone dane piętro jako docelowe.
 * Użyj panelu po lewej stronie ekranu, by stworzyć nowy układ wind.
 * Użyj przycisku **Step** na dole ekranu, by wykonać krok symulacji.
 * Użyj przycisków **UP** i **DOWN** po lewej stronie, by przyzwać windę na dane piętro.
